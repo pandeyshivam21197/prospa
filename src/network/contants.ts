@@ -5,3 +5,7 @@ export enum API_METHODS {
   PUT = 'put',
   PATCH = 'patch',
 }
+
+export const END_POINTS = {
+  products: 'products',
+};
