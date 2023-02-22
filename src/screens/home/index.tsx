@@ -1,16 +1,101 @@
 import React, {FC, useCallback, useEffect, useState} from 'react';
-import {FlatList, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+  Alert,
+  FlatList,
+  Linking,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Loader from '../../components/atoms/loader';
 import Text from '../../components/atoms/text';
+import Button from '../../components/atoms/button';
 import Image from '../../components/atoms/image';
 import {ApiClient} from '../../network/client';
 import {END_POINTS} from '../../network/contants';
 import {IProduct} from './interfaces';
 import {Card} from '../../components/HOC/card';
 import {screenDimension} from '../../utils/dimensionUtils';
+import {
+  Camera,
+  CameraPermissionStatus,
+  useCameraDevices,
+  useFrameProcessor,
+} from 'react-native-vision-camera';
 
 const Home: FC<any> = (): React.ReactElement => {
   const [products, setProducts] = useState(null);
+  const [camerConfig, setCamerConfig] = useState({cameraVisible: false});
+
+  const {cameraVisible} = camerConfig;
+
+  const devices = useCameraDevices();
+  const device = devices.back;
+
+  const isDeviceAvailable = !!device;
+
+  const onCameraGoBack = useCallback(() => {
+    setCamerConfig(prevState => ({...prevState, cameraVisible: false}));
+  }, []);
+
+  const showPermissionBlockedPopup = () => {
+    return Alert.alert(
+      'The Camer permission has been denied earlier',
+      'it can be enabled from the settings',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.info('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {text: 'Open Settings', onPress: () => Linking.openSettings()},
+      ],
+    );
+  };
+
+  const onProduct = useCallback(async (item: IProduct) => {
+    const {thumbnail} = item;
+
+    const cameraPermission: CameraPermissionStatus =
+      await Camera.getCameraPermissionStatus();
+
+    if (cameraPermission === 'authorized') {
+      setCamerConfig(prevState => ({...prevState, cameraVisible: true}));
+      //TODO
+    } else {
+      showPermissionBlockedPopup();
+    }
+  }, []);
+
+  const renderProducts = useCallback(
+    ({item}: {item: IProduct}) => {
+      const {thumbnail, title, description, price} = item;
+
+      return (
+        <TouchableOpacity onPress={() => onProduct(item)}>
+          <Card style={styles.card}>
+            <Image source={{uri: thumbnail}} style={styles.productImage} />
+            <View>
+              <Text numberOfLines={1}>{price}</Text>
+              <Text numberOfLines={1}>{title}</Text>
+              <Text numberOfLines={1}>{description}</Text>
+            </View>
+          </Card>
+        </TouchableOpacity>
+      );
+    },
+    [onProduct],
+  );
+
+  const renderItemSeparator = useCallback(
+    () => <View style={styles.separator} />,
+    [],
+  );
+
+  const frameProcessor = useFrameProcessor(frame => {
+    'worklet';
+    console.log(frame, 'frame@@');
+  }, []);
 
   useEffect(() => {
     //TODO: api
@@ -22,34 +107,6 @@ const Home: FC<any> = (): React.ReactElement => {
 
     getProducts();
   }, []);
-
-  const onProduct = (item: IProduct) => {
-    const {thumbnail} = item;
-
-    //TODO: open camera and super impose this thumnail
-  };
-
-  const renderProducts = useCallback(({item}: {item: IProduct}) => {
-    const {thumbnail, title, description, price} = item;
-
-    return (
-      <TouchableOpacity onPress={() => onProduct(item)}>
-        <Card style={styles.card}>
-          <Image source={{uri: thumbnail}} style={styles.productImage} />
-          <View>
-            <Text numberOfLines={1}>{price}</Text>
-            <Text numberOfLines={1}>{title}</Text>
-            <Text numberOfLines={1}>{description}</Text>
-          </View>
-        </Card>
-      </TouchableOpacity>
-    );
-  }, []);
-
-  const renderItemSeparator = useCallback(
-    () => <View style={styles.separator} />,
-    [],
-  );
 
   if (!products) {
     return <Loader />;
@@ -69,6 +126,22 @@ const Home: FC<any> = (): React.ReactElement => {
         keyExtractor={item => `${item.id}`}
         removeClippedSubviews
       />
+      {isDeviceAvailable && cameraVisible && (
+        <View style={StyleSheet.absoluteFill}>
+          <Camera
+            style={StyleSheet.absoluteFill}
+            device={device}
+            isActive={true}
+            frameProcessor={frameProcessor}
+          />
+          <Button
+            onPress={onCameraGoBack}
+            title={'Go Back'}
+            color="#841584"
+            accessibilityLabel="scan another"
+          />
+        </View>
+      )}
     </View>
   );
 };
