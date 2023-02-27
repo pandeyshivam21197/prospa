@@ -70,8 +70,6 @@ const Home: FC<any> = (): React.ReactElement => {
 
     cameraPermission = await Camera.getCameraPermissionStatus();
 
-    console.log(cameraPermission, 'cameraPermission');
-
     if (cameraPermission === 'authorized') {
       image.current = thumbnail;
 
@@ -108,8 +106,6 @@ const Home: FC<any> = (): React.ReactElement => {
   );
 
   const onImage = useCallback((image64: string) => {
-    console.log('run on js', image64);
-
     base64Image.current = image64;
   }, []);
 
@@ -117,7 +113,6 @@ const Home: FC<any> = (): React.ReactElement => {
     'worklet';
 
     const res = superImposeImage(frame, image.current);
-    console.log('calling worklet@@');
 
     runOnJS(onImage)(res?.base64Image || '');
   }, []);
@@ -136,8 +131,6 @@ const Home: FC<any> = (): React.ReactElement => {
   if (!products) {
     return <Loader />;
   }
-
-  console.log('rendering@@@');
 
   return (
     <View style={styles.container}>

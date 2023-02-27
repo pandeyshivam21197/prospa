@@ -21,9 +21,7 @@ class ApiClient {
     try {
       const res = await this.apiclient?.request(config);
       return res;
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
   };
 
   get = (url: string, params = {}): any => {
