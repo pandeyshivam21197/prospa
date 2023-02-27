@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useEffect, useState} from 'react';
+import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
 import {
   Alert,
   FlatList,
@@ -22,10 +22,15 @@ import {
   useCameraDevices,
   useFrameProcessor,
 } from 'react-native-vision-camera';
+import {superImposeImage} from '../../plugins';
+import {runOnJS} from 'react-native-reanimated';
 
 const Home: FC<any> = (): React.ReactElement => {
   const [products, setProducts] = useState(null);
   const [camerConfig, setCamerConfig] = useState({cameraVisible: false});
+
+  const image = useRef<string>();
+  const base64Image = useRef<string>('');
 
   const {cameraVisible} = camerConfig;
 
@@ -56,10 +61,20 @@ const Home: FC<any> = (): React.ReactElement => {
   const onProduct = useCallback(async (item: IProduct) => {
     const {thumbnail} = item;
 
-    const cameraPermission: CameraPermissionStatus =
+    let cameraPermission: CameraPermissionStatus =
       await Camera.getCameraPermissionStatus();
 
+    if (cameraPermission === 'denied') {
+      await Camera.requestCameraPermission();
+    }
+
+    cameraPermission = await Camera.getCameraPermissionStatus();
+
+    console.log(cameraPermission, 'cameraPermission');
+
     if (cameraPermission === 'authorized') {
+      image.current = thumbnail;
+
       setCamerConfig(prevState => ({...prevState, cameraVisible: true}));
       //TODO
     } else {
@@ -92,9 +107,19 @@ const Home: FC<any> = (): React.ReactElement => {
     [],
   );
 
+  const onImage = useCallback((image64: string) => {
+    console.log('run on js', image64);
+
+    base64Image.current = image64;
+  }, []);
+
   const frameProcessor = useFrameProcessor(frame => {
     'worklet';
-    console.log(frame, 'frame@@');
+
+    const res = superImposeImage(frame, image.current);
+    console.log('calling worklet@@');
+
+    runOnJS(onImage)(res?.base64Image || '');
   }, []);
 
   useEffect(() => {
@@ -111,6 +136,8 @@ const Home: FC<any> = (): React.ReactElement => {
   if (!products) {
     return <Loader />;
   }
+
+  console.log('rendering@@@');
 
   return (
     <View style={styles.container}>
@@ -141,6 +168,13 @@ const Home: FC<any> = (): React.ReactElement => {
             accessibilityLabel="scan another"
           />
         </View>
+      )}
+
+      {base64Image.current && (
+        <Image
+          style={{width: 200, height: 200, position: 'absolute', top: 100}}
+          source={{uri: `data:image/png;base64,${base64Image.current}`}}
+        />
       )}
     </View>
   );
