@@ -4,6 +4,7 @@ export enum NavigationKeys {
 
   // screen
   homeScreen = 'homeScreen',
+  singInScreen = 'singInScreen',
 
   // tab
   bottomTab = 'bottomTab',

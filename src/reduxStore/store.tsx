@@ -1,20 +1,18 @@
-import {combineReducers, configureStore} from '@reduxjs/toolkit';
+import {configureStore} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2';
-import homeReducer from './reducers/homeReducer';
 import {persistReducer, persistStore} from 'redux-persist';
 import thunk from 'redux-thunk';
+import {rootReducer} from './reducers';
 
 const middlewares = [thunk];
 
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['homeReducer'],
+  whitelist: ['singInReducer'],
   stateReconciler: autoMergeLevel2,
 };
-
-const rootReducer = combineReducers({homeReducer});
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
