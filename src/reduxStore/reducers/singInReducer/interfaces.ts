@@ -1,1 +1,3 @@
-export interface ISingInReducer {}
+export interface ISingInReducer {
+  isLoggedIn: boolean;
+}
