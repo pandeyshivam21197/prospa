@@ -3,7 +3,6 @@ import {NavigationContainer} from '@react-navigation/native';
 import AppStackNavigator from './appStackNavigator';
 
 const RootNavigator = () => {
-  const isLoggedIn = useSelector
   return (
     <NavigationContainer>
       <AppStackNavigator />
