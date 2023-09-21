@@ -9,6 +9,8 @@ export const icons = {
   invoiceTab: 'invoiceTab',
   user: 'user',
   downArrow: 'downArrow',
+  circleAlert: 'circleAlert',
+  trophy: 'trophy',
 };
 
 export const Icon = createIconSetFromIcoMoon(icoMoonConfig);
