@@ -1,11 +1,11 @@
 import React, {FC} from 'react';
-import {Text as RNText, StyleSheet} from 'react-native';
+import {Text as RNText, StyleProp, StyleSheet, TextStyle} from 'react-native';
 import {fontPixel, heightPixel} from '../../../utils/responsiveUtils';
 
 export enum FontWeights {
   normal = '400', //400
   semiBold = '500', //500
-  bold = '500', //600
+  bold = '600', //600
 }
 
 interface ITextProps {
@@ -14,6 +14,7 @@ interface ITextProps {
   children: React.ReactNode;
   fontSize: number;
   lineHeight: number;
+  style?: StyleProp<TextStyle>;
 }
 
 const Text: FC<ITextProps> = ({
@@ -22,10 +23,11 @@ const Text: FC<ITextProps> = ({
   textColor = '#1C1335',
   fontWeight = FontWeights.normal,
   children,
+  style,
 }) => {
   const styles = getStyles(textColor, fontWeight, fontSize, lineHeight);
 
-  return <RNText style={styles.text}>{children}</RNText>;
+  return <RNText style={[styles.text, style]}>{children}</RNText>;
 };
 
 //TODO: add font family

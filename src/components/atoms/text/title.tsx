@@ -1,5 +1,6 @@
 import React, {FC} from 'react';
 import Text, {FontWeights} from '../text';
+import {StyleProp, TextStyle} from 'react-native';
 
 interface ITitleProps {
   textColor?: string;
@@ -7,6 +8,7 @@ interface ITitleProps {
   lineHeight?: number;
   fontWeight?: FontWeights;
   children: React.ReactNode;
+  style: StyleProp<TextStyle>;
 }
 
 export const Title: FC<ITitleProps> = ({
@@ -15,9 +17,11 @@ export const Title: FC<ITitleProps> = ({
   textColor,
   fontSize = 24,
   lineHeight = 26,
+  style,
 }) => {
   return (
     <Text
+      style={style}
       fontSize={fontSize}
       lineHeight={lineHeight}
       fontWeight={fontWeight}

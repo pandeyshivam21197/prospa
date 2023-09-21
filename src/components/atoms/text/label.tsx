@@ -1,5 +1,6 @@
 import React, {FC} from 'react';
 import Text, {FontWeights} from '../text';
+import {StyleProp, TextStyle} from 'react-native';
 
 interface ILabelProps {
   textColor?: string;
@@ -7,6 +8,7 @@ interface ILabelProps {
   lineHeight?: number;
   fontWeight?: FontWeights;
   children: React.ReactNode;
+  style: StyleProp<TextStyle>;
 }
 
 export const Label: FC<ILabelProps> = ({
@@ -15,9 +17,11 @@ export const Label: FC<ILabelProps> = ({
   textColor,
   fontSize = 10,
   lineHeight = 12,
+  style,
 }) => {
   return (
     <Text
+      style={style}
       fontSize={fontSize}
       lineHeight={lineHeight}
       fontWeight={fontWeight}

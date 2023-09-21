@@ -7,6 +7,8 @@ export const icons = {
   businessTab: 'businessTab',
   virtualTab: 'virtualTab',
   invoiceTab: 'invoiceTab',
+  user: 'user',
+  downArrow: 'downArrow',
 };
 
 export const Icon = createIconSetFromIcoMoon(icoMoonConfig);
