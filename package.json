@@ -9,7 +9,10 @@
     "start": "react-native start",
     "test": "jest",
     "link": "react-native link",
-    "project:link": "npx react-native-asset"
+    "project:link": "npx react-native-asset",
+    "android:clean": "cd android && ./gradlew clean",
+    "android:bundle": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
+    "android:build": "yarn android:bundle && yarn android:clean && rm -rf android/app/src/main/res/drawable-* && rm -rf android/app/src/main/res/raw/* && cd android && ./gradlew assembleRelease"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.19.0",
