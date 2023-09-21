@@ -8,7 +8,7 @@ interface ITitleProps {
   lineHeight?: number;
   fontWeight?: FontWeights;
   children: React.ReactNode;
-  style: StyleProp<TextStyle>;
+  style?: StyleProp<TextStyle>;
 }
 
 export const Title: FC<ITitleProps> = ({

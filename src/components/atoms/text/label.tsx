@@ -8,7 +8,7 @@ interface ILabelProps {
   lineHeight?: number;
   fontWeight?: FontWeights;
   children: React.ReactNode;
-  style: StyleProp<TextStyle>;
+  style?: StyleProp<TextStyle>;
 }
 
 export const Label: FC<ILabelProps> = ({

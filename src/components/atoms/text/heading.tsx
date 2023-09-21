@@ -8,7 +8,7 @@ interface IHeadingProps {
   lineHeight?: number;
   fontWeight?: FontWeights;
   children: React.ReactNode;
-  style: StyleProp<TextStyle>;
+  style?: StyleProp<TextStyle>;
 }
 
 export const Heading: FC<IHeadingProps> = ({
